@@ -3,6 +3,7 @@ package bcex
 import (
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -92,7 +93,7 @@ func (c *client) doTimeoutRequest(timer *time.Timer, req *http.Request) (*http.R
 	}
 }
 
-// do prepare and process HTTP request to HitBtc API
+// do prepare and process HTTP request to Rest API
 func (c *client) do(method string, resource string, payload map[string]string, authNeeded bool) (response []byte, err error) {
 	connectTimer := time.NewTimer(c.httpTimeout)
 
@@ -103,6 +104,7 @@ func (c *client) do(method string, resource string, payload map[string]string, a
 		rawurl = fmt.Sprintf("%s/%s", API_BASE, resource)
 	}
 	var formData string
+	var body io.Reader
 	if method == "GET" {
 		var URL *url.URL
 		URL, err = url.Parse(rawurl)
@@ -116,14 +118,16 @@ func (c *client) do(method string, resource string, payload map[string]string, a
 		formData = q.Encode()
 		URL.RawQuery = formData
 		rawurl = URL.String()
+		body = nil
 	} else {
 		formValues := url.Values{}
 		for key, value := range payload {
 			formValues.Set(key, value)
 		}
 		formData = formValues.Encode()
+		body = strings.NewReader(formData)
 	}
-	req, err := http.NewRequest(method, rawurl, strings.NewReader(formData))
+	req, err := http.NewRequest(method, rawurl, body)
 	if err != nil {
 		return
 	}
