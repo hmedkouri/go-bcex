@@ -65,3 +65,18 @@ func TestGetBalances(t *testing.T) {
 	t.Logf("GetBalances : %#v\n", balances)
 	require.NoError(t, err, defaultErrorMessage)
 }
+
+func TestGetTrades(t *testing.T) {
+	trades, err := bc.GetTrades("BTC-USD")
+	t.Logf("GetTrades : %#v\n", trades)
+	require.NoError(t, err, defaultErrorMessage)
+}
+
+func TestGetOrders(t *testing.T) {
+	options := bcex.GetOrdersOpts {
+		Symbol: "BTC-USD",
+	}
+	orders, err := bc.GetOrders(&options)
+	t.Logf("GetOrders : %#v\n", orders)
+	require.NoError(t, err, defaultErrorMessage)
+}
