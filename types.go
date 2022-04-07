@@ -160,6 +160,44 @@ func (opts GetOrdersOpts) parse() map[string]string {
 	return payload
 }
 
+// GetFillsOpts Optional parameters for the method 'GetFills'
+type GetFillsOpts struct {
+    Symbol string
+    From int64
+    To int64
+    Limit int32
+}
+
+func (opts GetFillsOpts) parse() map[string]string {
+	payload := make(map[string]string)
+	if opts.Symbol != "" {
+		payload["symbol"] = opts.Symbol
+	}
+	if opts.From != 0 {
+		payload["from"] = parameterToString(opts.From, "")
+	}
+	if opts.To != 0 {
+		payload["to"] = parameterToString(opts.To, "")
+	}
+	if opts.Limit != 0 {
+		payload["limit"] = parameterToString(opts.Limit, "")
+	}
+	return payload
+}
+
+// DeleteAllOrdersOpts Optional parameters for the method 'DeleteAllOrders'
+type DeleteAllOrdersOpts struct {
+    Symbol string
+}
+
+func (opts DeleteAllOrdersOpts) parse() map[string]string {
+	payload := make(map[string]string)
+	if opts.Symbol != "" {
+		payload["symbol"] = opts.Symbol
+	}
+	return payload
+}
+
 // OrderSummary struct for OrderSummary
 type OrderSummary struct {
 	// The unique order id assigned by the exchange
@@ -187,6 +225,38 @@ type OrderSummary struct {
 	AvgPx float64 `json:"avgPx,omitempty"`
 	// Time in ms since 01/01/1970 (epoch)
 	Timestamp int64 `json:"timestamp,omitempty"`
+}
+
+// TimeInForce \"GTC\" for Good Till Cancel, \"IOC\" for Immediate or Cancel, \"FOK\" for Fill or Kill, \"GTD\" Good Till Date
+type TimeInForce string
+
+// List of TimeInForce
+const (
+	GTC TimeInForce = "GTC"
+	IOC TimeInForce = "IOC"
+	FOK TimeInForce = "FOK"
+	GTD TimeInForce = "GTD"
+)
+
+// BaseOrder struct for BaseOrder
+type BaseOrder struct {
+	// Reference field provided by client. Cannot exceed 20 characters, only alphanumeric characters are allowed.
+	ClOrdId string `json:"clOrdId"`
+	OrdType OrdType `json:"ordType"`
+	// Blockchain symbol identifier
+	Symbol string `json:"symbol"`
+	Side Side `json:"side"`
+	// The order size in the terms of the base currency
+	OrderQty float64 `json:"orderQty"`
+	TimeInForce TimeInForce `json:"timeInForce,omitempty"`
+	// The limit price for the order
+	Price float64 `json:"price,omitempty"`
+	// expiry date in the format YYYYMMDD
+	ExpireDate int32 `json:"expireDate,omitempty"`
+	// The minimum quantity required for an IOC fill
+	MinQty float64 `json:"minQty,omitempty"`
+	// The limit price for the order
+	StopPx float64 `json:"stopPx,omitempty"`
 }
 
 // parameterToString convert interface{} parameters to string, using a delimiter if format is provided.

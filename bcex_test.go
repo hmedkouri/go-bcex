@@ -80,3 +80,12 @@ func TestGetOrders(t *testing.T) {
 	t.Logf("GetOrders : %#v\n", orders)
 	require.NoError(t, err, defaultErrorMessage)
 }
+
+func TestGetFills(t *testing.T) {
+	options := bcex.GetFillsOpts {
+		Symbol: "BTC-USD",
+	}
+	fills, err := bc.GetFills(&options)
+	t.Logf("GetFills : %#v\n", fills)
+	require.NoError(t, err, defaultErrorMessage)
+}
