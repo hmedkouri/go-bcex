@@ -89,3 +89,11 @@ func TestGetFills(t *testing.T) {
 	t.Logf("GetFills : %#v\n", fills)
 	require.NoError(t, err, defaultErrorMessage)
 }
+
+func TestDeleteAllOrders(t *testing.T) {
+	options := bcex.DeleteAllOrdersOpts {
+		Symbol: "BTC-USD",
+	}
+	err := bc.DeleteAllOrders(&options)
+	require.NoError(t, err, defaultErrorMessage)
+}

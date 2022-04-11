@@ -49,7 +49,16 @@ DeleteAllOrders Delete all open orders (of a symbol, if specified)
  * @param "Symbol" (optional.String) - 
 */
 func (b *Bcex) DeleteAllOrders(options *DeleteAllOrdersOpts) (err error) {
-	
+	var payload map[string]string
+	if (options != nil) {
+		payload = options.parse()
+	}
+	r, err := b.client.do("DELETE", "orders", payload, true)
+	_ = r
+	if err != nil {
+		return
+	}
+	return
 }
 
 // GetFees is used to retrieve the fees from your account
