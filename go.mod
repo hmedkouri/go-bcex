@@ -1,4 +1,4 @@
-module hmedkouri/go-bcex
+module github.com/hmedkouri/go-bcex
 
 go 1.18
 
