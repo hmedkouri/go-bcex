@@ -1,4 +1,4 @@
-package bcex
+package rest
 
 import (
 	"fmt"
