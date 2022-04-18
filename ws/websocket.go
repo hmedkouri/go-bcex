@@ -794,7 +794,7 @@ func (ws *WebSocketClient) listenForUpdates(quitCh chan struct{}) {
 						}
 					}
 				}
-				log.Printf("Received message: %s", msg)
+				//log.Printf("Received message: %s", msg)
 				ws.resetHeartbeat()
 			}
 		}
