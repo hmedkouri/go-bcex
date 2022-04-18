@@ -1,4 +1,4 @@
-package bcex
+package rest
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ CreateOrder Add an order
  * @param baseOrder Trade
 @return OrderSummary
 */
-func (b *Bcex) CreateOrder(requestOrder BaseOrder) (order OrderSummary, err error) {
+func (client *Client) CreateOrder(requestOrder BaseOrder) (order OrderSummary, err error) {
 	payload := make(map[string]string, 6)
 
 	payload["clOrdId"] = requestOrder.ClOrdId
@@ -24,7 +24,7 @@ func (b *Bcex) CreateOrder(requestOrder BaseOrder) (order OrderSummary, err erro
 	method := "POST"
 	resource := "orders"
 
-	r, err := b.client.do(method, resource, payload, true)
+	r, err := client.do(method, resource, payload, true)
 	if err != nil {
 		return
 	}
@@ -48,12 +48,12 @@ DeleteAllOrders Delete all open orders (of a symbol, if specified)
  * @param optional nil or *DeleteAllOrdersOpts - Optional Parameters:
  * @param "Symbol" (optional.String) - 
 */
-func (b *Bcex) DeleteAllOrders(options *DeleteAllOrdersOpts) (err error) {
+func (client *Client) DeleteAllOrders(options *DeleteAllOrdersOpts) (err error) {
 	var payload map[string]string
 	if (options != nil) {
 		payload = options.parse()
 	}
-	r, err := b.client.do("DELETE", "orders", payload, true)
+	r, err := client.do("DELETE", "orders", payload, true)
 	_ = r
 	if err != nil {
 		return
@@ -62,8 +62,8 @@ func (b *Bcex) DeleteAllOrders(options *DeleteAllOrdersOpts) (err error) {
 }
 
 // GetFees is used to retrieve the fees from your account
-func (b *Bcex) GetFees() (fees Fees, err error) {
-	r, err := b.client.do("GET", "fees", nil, true)
+func (client *Client) GetFees() (fees Fees, err error) {
+	r, err := client.do("GET", "fees", nil, true)
 	if err != nil {
 		return
 	}
@@ -79,8 +79,8 @@ func (b *Bcex) GetFees() (fees Fees, err error) {
 }
 
 // GetBalances is used to retrieve all balances from your account
-func (b *Bcex) GetBalances() (balances BalanceMap, err error) {
-	r, err := b.client.do("GET", "accounts", nil, true)
+func (client *Client) GetBalances() (balances BalanceMap, err error) {
+	r, err := client.do("GET", "accounts", nil, true)
 	if err != nil {
 		return
 	}
@@ -97,12 +97,12 @@ func (b *Bcex) GetBalances() (balances BalanceMap, err error) {
 
 // GetTrades used to retrieve your trade history.
 // market string literal for the market (ie. BTC/LTC). If set to "all", will return for all market
-func (b *Bcex) GetTrades(currencyPair string) (trades []Trade, err error) {
+func (client *Client) GetTrades(currencyPair string) (trades []Trade, err error) {
 	payload := make(map[string]string)
 	if currencyPair != "all" {
 		payload["symbol"] = currencyPair
 	}
-	r, err := b.client.do("GET", "trades", payload, true)
+	r, err := client.do("GET", "trades", payload, true)
 	if err != nil {
 		return
 	}
@@ -128,12 +128,12 @@ Returns live and historic orders, defaulting to live orders. Returns at most 100
  * @param "Limit" (int32) -  Maximum amount of results to return in a single call. If omitted, 100 results are returned by default. 
 @return []OrderSummary
 */
-func (b *Bcex) GetOrders(options *GetOrdersOpts) (orders []OrderSummary, err error) {
+func (client *Client) GetOrders(options *GetOrdersOpts) (orders []OrderSummary, err error) {
 	var payload map[string]string
 	if (options != nil) {
 		payload = options.parse()
 	}
-	r, err := b.client.do("GET", "orders", payload, true)
+	r, err := client.do("GET", "orders", payload, true)
 	if err != nil {
 		return
 	}
@@ -158,12 +158,12 @@ Returns filled orders, including partial fills. Returns at most 100 results, use
  * @param "Limit" (optional.Int32) -  Maximum amount of results to return in a single call. If omitted, 100 results are returned by default. 
 @return []OrderSummary
 */
-func (b *Bcex) GetFills(options *GetFillsOpts) (fills []OrderSummary, err error) {
+func (client *Client) GetFills(options *GetFillsOpts) (fills []OrderSummary, err error) {
 	var payload map[string]string
 	if (options != nil) {
 		payload = options.parse()
 	}
-	r, err := b.client.do("GET", "fills", payload, true)
+	r, err := client.do("GET", "fills", payload, true)
 	if err != nil {
 		return
 	}
@@ -183,8 +183,8 @@ GetOrderById Get a specific order
  * @param orderId Order ID
 @return OrderSummary
 */
-func (b *Bcex) GetOrderById(orderId int64) (order OrderSummary, err error) {
-	r, err := b.client.do("GET", "orders/"+strconv.Itoa(int(orderId)), nil, true)
+func (client *Client) GetOrderById(orderId int64) (order OrderSummary, err error) {
+	r, err := client.do("GET", "orders/"+strconv.Itoa(int(orderId)), nil, true)
 	if err != nil {
 		return
 	}
