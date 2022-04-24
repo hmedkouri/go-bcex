@@ -30,6 +30,7 @@ func TestWs(t *testing.T) {
 	subscribeToSymbols(bc.Ws)
 	subscribeToL3(bc.Ws, ws.BTCUSD)
 	subscribeToL2(bc.Ws, ws.ETHBTC)
+	subscribeToPrices(bc.Ws, ws.BTCUSD)
 
 	time.Sleep(5 * time.Second)
 }
@@ -92,6 +93,14 @@ func subscribeToL3(wsClient *ws.WebSocketClient, symbol ws.Symbol) {
 
 func subscribeToL2(wsClient *ws.WebSocketClient, symbol ws.Symbol) {
 	err := wsClient.SubscribeToL2(symbol)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func subscribeToPrices(wsClient *ws.WebSocketClient, symbol ws.Symbol) {
+	err := wsClient.SubscribeToPrices(symbol, ws.Granularity60)
 
 	if err != nil {
 		log.Fatal(err)

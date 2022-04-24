@@ -106,21 +106,19 @@ type SymbolMsg struct {
 	Imbalance              float64 `json:"imbalance"`
 }
 
+type Level struct {
+	Px  float64 `json:"px"`
+	Qty float64 `json:"qty"`
+	Num int     `json:"num"`
+}
+
 type L3Msg struct {
 	Seqnum  int    `json:"seqnum"`
 	Event   string `json:"event"`
 	Channel string `json:"channel"`
 	Symbol  string `json:"symbol"`
-	Bids    []struct {
-		ID  string  `json:"id"`
-		Px  float64 `json:"px"`
-		Qty float64 `json:"qty"`
-	} `json:"bids"`
-	Asks []struct {
-		ID  string  `json:"id"`
-		Px  float64 `json:"px"`
-		Qty float64 `json:"qty"`
-	} `json:"asks"`
+	Bids    []Level `json:"bids"`
+	Asks 	[]Level `json:"asks"`
 }
 
 type L2Msg struct {
@@ -128,16 +126,8 @@ type L2Msg struct {
 	Event   string `json:"event"`
 	Channel string `json:"channel"`
 	Symbol  string `json:"symbol"`
-	Bids    []struct {
-		Px  float64 `json:"px"`
-		Qty float64 `json:"qty"`
-		Num int     `json:"num"`
-	} `json:"bids"`
-	Asks []struct {
-		Px  float64 `json:"px"`
-		Qty float64 `json:"qty"`
-		Num int     `json:"num"`
-	} `json:"asks"`
+	Bids    []Level `json:"bids"`
+	Asks 	[]Level `json:"asks"`
 }
 
 type PricesMsg struct {
