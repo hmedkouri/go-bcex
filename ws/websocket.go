@@ -20,10 +20,12 @@ var (
 )
 
 type Configuration struct {
-	Host    string
-	ApiKey  string
-	Timeout time.Duration
-	Env     Env
+	Host      string
+	ApiKey    string
+	Env       Env
+	Timeout   time.Duration
+	Keepalive bool
+	IsSecure  bool
 }
 
 const (
@@ -105,9 +107,6 @@ const (
 
 var (
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
-
-	WsEndpoint     = "wss://ws.blockchain.info/mercury-gateway/v1/ws"
-	WsTestEndpoint = "wss://ws.staging.blockchain.info/mercury-gateway/v1/ws"
 
 	WsHeaders = http.Header{
 		"Origin": {"https://exchange.blockchain.com"},
@@ -234,9 +233,9 @@ func (ws *WebSocketClient) Errors() chan error {
 }
 
 type privateConnect struct {
-	Token       string `json:"token"`
-	Action      string `json:"action"`
-	Channel     string `json:"channel"`
+	Token   string `json:"token"`
+	Action  string `json:"action"`
+	Channel string `json:"channel"`
 }
 
 func (ws *WebSocketClient) Start(authenticate bool) error {
@@ -258,9 +257,9 @@ func (ws *WebSocketClient) Start(authenticate bool) error {
 	if authenticate {
 		//WsHeaders.Add("Cookie", cookie[ws.config.Env]+ws.config.ApiKey)
 		connectMsg, _ := json.Marshal(&privateConnect{
-			Channel:    "auth",
-			Token:      ws.config.ApiKey,
-			Action:     "subscribe",
+			Channel: "auth",
+			Token:   ws.config.ApiKey,
+			Action:  "subscribe",
 		})
 
 		// Send auth message

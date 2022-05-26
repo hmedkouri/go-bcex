@@ -19,7 +19,8 @@ func New(apiKey, apiSecret string) *Bcex {
 	ws := ws.NewWebSocketClient(ws.Configuration{
 		Host: ws.WsEndpoint,
 		ApiKey: apiSecret,
-		Timeout: 5 * time.Second,
+		Timeout: 60 * time.Second,
+		Keepalive: true,
 		Env:     ws.PROD,
 	})
 	return &Bcex{api, ws, true}
