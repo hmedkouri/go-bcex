@@ -58,6 +58,33 @@ func (ws *WebSocketClient) WsL2Serve(symbol string, handler WsL2MsgHandler, errH
 	return wsServe(cfg, r, wsHandler, errHandler)
 }
 
+// WsL2ServeCombined serve websocket l2 handler for a list of symbols
+func (ws *WebSocketClient) WsL2ServeCombined(symbols []string, handler WsL2MsgHandler, errHandler ErrHandler) (doneC, stopC chan struct{}, err error) {
+	cfg := ws.config
+	cfg.IsSecure = false
+	wsHandler := func(message []byte) {
+		var m L2Msg
+		err := json.Unmarshal(message, &m)
+		if err != nil {
+			errHandler(err)
+			return
+		}		
+		handler(&m)
+	}
+
+	requests := make([]interface{}, len(symbols))
+	for i, symbol := range symbols {
+		r := quoteSubscriptionRequest{
+			Action:  actionSubscribe,
+			Channel: l2Channel,
+			Symbol:  Symbol(symbol),
+		}
+		requests[i] = r
+	}
+
+	return wsServeCombined(cfg, requests, wsHandler, errHandler)
+}
+
 // WsL3Serve serve websocket l3 handler with a symbol
 func (ws *WebSocketClient) WsL3Serve(symbol string, handler WsL3MsgHandler, errHandler ErrHandler) (doneC, stopC chan struct{}, err error) {
 	cfg := ws.config
@@ -166,6 +193,84 @@ var wsServe = func(cfg Configuration, request interface{}, handler WsHandler, er
 	err = c.WriteMessage(websocket.TextMessage, requestBytes)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	doneC = make(chan struct{})
+	stopC = make(chan struct{})
+	go func() {
+		// This function will exit either on error from
+		// websocket.Conn.ReadMessage or when the stopC channel is
+		// closed by the client.
+		defer close(doneC)
+		if cfg.Keepalive {
+			keepAlive(c, cfg.Timeout)
+		}
+		// Wait for the stopC channel to be closed.  We do that in a
+		// separate goroutine because ReadMessage is a blocking
+		// operation.
+		silent := false
+		go func() {
+			select {
+			case <-stopC:
+				silent = true
+			case <-doneC:
+			}
+			c.Close()
+		}()
+		for {
+			_, message, err := c.ReadMessage()
+			if err != nil {
+				if !silent {
+					errHandler(err)
+				}
+				return
+			}
+			handler(message)
+		}
+	}()
+	return
+}
+
+var wsServeCombined = func(cfg Configuration, requests []interface{}, handler WsHandler, errHandler ErrHandler) (doneC, stopC chan struct{}, err error) {
+	var d = websocket.Dialer{
+		Subprotocols:    []string{"p1", "p2"},
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		Proxy:           http.ProxyFromEnvironment,
+	}
+
+	d.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	c, _, err := d.Dial(cfg.Host, WsHeaders)
+	if err != nil {
+		return nil, nil, err
+	}
+	c.SetReadLimit(655350)
+	if cfg.IsSecure {
+		//WsHeaders.Add("Cookie", cookie[ws.config.Env]+ws.config.ApiKey)
+		connectMsg, _ := json.Marshal(&privateConnect{
+			Channel: "auth",
+			Token:   cfg.ApiKey,
+			Action:  "subscribe",
+		})
+
+		// Send auth message
+		err = c.WriteMessage(websocket.TextMessage, connectMsg)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	for _, request := range requests {
+		requestBytes, err := json.Marshal(request)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		// Send subscription request
+		err = c.WriteMessage(websocket.TextMessage, requestBytes)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	doneC = make(chan struct{})

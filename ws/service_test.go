@@ -28,3 +28,14 @@ func TestService(t *testing.T) {
 
 	time.Sleep(5 * time.Second)
 }
+
+func TestServiceCombined(t *testing.T) {
+	symbols := []string{"BTC-USD", "ETH-USD"}
+	bc.Ws.WsL2ServeCombined(symbols, func(event *ws.L2Msg) {
+		fmt.Printf("L2MsgA : %s, %d, %s\n", event.Event, event.Seqnum, event.Symbol)
+	}, func(err error) {
+		log.Fatal(err)
+	})
+
+	time.Sleep(5 * time.Second)
+}
