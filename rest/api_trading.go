@@ -198,3 +198,16 @@ func (client *Client) GetOrderById(orderId int64) (order OrderSummary, err error
 	err = json.Unmarshal(r, &order)
 	return
 }
+
+/*
+DeleteOrderById cancel a specific order
+ * @param orderId Order ID
+@return OrderSummary
+*/
+func (client *Client) DeleteOrderById(orderId int64) error {
+	_, err := client.do("DELETE", "orders/"+strconv.Itoa(int(orderId)), nil, true)
+	if err != nil {
+		return err
+	}
+	return nil
+}
