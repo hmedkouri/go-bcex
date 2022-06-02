@@ -17,7 +17,7 @@ var (
 	defaultErrorMessage string     = "There should be no error"
 )
 
-func TestGetSymbols(t *testing.T) {
+	func TestGetSymbols(t *testing.T) {
 	symbols, err := bc.Api.GetSymbols()
 	t.Logf("GetSymbols : %#v\n", symbols)
 	require.NoError(t, err, defaultErrorMessage)
