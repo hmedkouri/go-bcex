@@ -66,7 +66,10 @@ func TestGetBalances(t *testing.T) {
 }
 
 func TestGetTrades(t *testing.T) {
-	trades, err := bc.Api.GetTrades("BTC-USD")
+	options := rest.GetTradesOpts {
+		Symbol: "BTC-USD",
+	}
+	trades, err := bc.Api.GetTrades(&options)
 	t.Logf("GetTrades : %#v\n", trades)
 	require.NoError(t, err, defaultErrorMessage)
 }
