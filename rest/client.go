@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -107,8 +106,8 @@ func (c *Client) do(method string, resource string, params map[string]string, pa
 	} else {
 		rawurl = fmt.Sprintf("%s/%s", API_BASE, resource)
 	}
-	
-	var req *http.Request	
+
+	var req *http.Request
 	if method == "GET" || method == "DELETE" {
 		var URL *url.URL
 		URL, err = url.Parse(rawurl)
@@ -157,7 +156,7 @@ func (c *Client) do(method string, resource string, params map[string]string, pa
 	if err != nil {
 		return response, err
 	}
-	if resp.StatusCode != 200 && resp.StatusCode != 401 {		
+	if resp.StatusCode != 200 && resp.StatusCode != 401 {
 		return nil, &APIError{
 			Status:  resp.StatusCode,
 			Message: string(response),
