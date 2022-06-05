@@ -3,7 +3,6 @@ package rest
 import (
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -98,7 +97,7 @@ func (c *Client) doTimeoutRequest(timer *time.Timer, req *http.Request) (*http.R
 }
 
 // do prepare and process HTTP request to Rest API
-func (c *Client) do(method string, resource string, payload map[string]string, authNeeded bool) (response []byte, err error) {
+func (c *Client) do(method string, resource string, params map[string]string, payload []byte, authNeeded bool) (response []byte, err error) {
 	connectTimer := time.NewTimer(c.httpTimeout)
 
 	var rawurl string
@@ -107,33 +106,32 @@ func (c *Client) do(method string, resource string, payload map[string]string, a
 	} else {
 		rawurl = fmt.Sprintf("%s/%s", API_BASE, resource)
 	}
-	var formData string
-	var body io.Reader
-	if method == "GET" {
+	
+	var req *http.Request	
+	if method == "GET" || method == "DELETE" {
 		var URL *url.URL
 		URL, err = url.Parse(rawurl)
 		if err != nil {
 			return
 		}
 		q := URL.Query()
-		for key, value := range payload {
+		for key, value := range params {
 			q.Set(key, value)
 		}
-		formData = q.Encode()
+		formData := q.Encode()
 		URL.RawQuery = formData
 		rawurl = URL.String()
-		body = nil
-	} else {
-		formValues := url.Values{}
-		for key, value := range payload {
-			formValues.Set(key, value)
+		req, err = http.NewRequest(method, rawurl, nil)
+		if err != nil {
+			return
 		}
-		formData = formValues.Encode()
-		body = strings.NewReader(formData)
-	}
-	req, err := http.NewRequest(method, rawurl, body)
-	if err != nil {
-		return
+	} else {
+		body := strings.NewReader(string(payload))
+		req, err = http.NewRequest(method, rawurl, body)
+		if err != nil {
+			return
+		}
+		req.Header.Add("Content-Type", "application/json")
 	}
 
 	req.Header.Add("Accept", "application/json")

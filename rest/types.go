@@ -185,6 +185,31 @@ func (opts GetFillsOpts) parse() map[string]string {
 	return payload
 }
 
+// GetTradesOpts Optional parameters for the method 'GetTrades'
+type GetTradesOpts struct {
+    Symbol string
+    From int64
+    To int64
+    Limit int32
+}
+
+func (opts GetTradesOpts) parse() map[string]string {
+	payload := make(map[string]string)
+	if opts.Symbol != "" {
+		payload["symbol"] = opts.Symbol
+	}
+	if opts.From != 0 {
+		payload["from"] = parameterToString(opts.From, "")
+	}
+	if opts.To != 0 {
+		payload["to"] = parameterToString(opts.To, "")
+	}
+	if opts.Limit != 0 {
+		payload["limit"] = parameterToString(opts.Limit, "")
+	}
+	return payload
+}
+
 // DeleteAllOrdersOpts Optional parameters for the method 'DeleteAllOrders'
 type DeleteAllOrdersOpts struct {
     Symbol string
