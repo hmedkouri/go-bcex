@@ -157,18 +157,10 @@ func (c *Client) do(method string, resource string, params map[string]string, pa
 	if err != nil {
 		return response, err
 	}
-	if resp.StatusCode != 200 && resp.StatusCode != 401 {
-		var res interface{}
-		if err := json.Unmarshal(response, res); err != nil {
-			return nil, &APIError{
-				Status:  resp.StatusCode,
-				Message: err.Error(),
-			}
-		}
-		
+	if resp.StatusCode != 200 && resp.StatusCode != 401 {		
 		return nil, &APIError{
 			Status:  resp.StatusCode,
-			Message: res.(string),		
+			Message: string(response),
 		}
 	}
 	return response, nil
