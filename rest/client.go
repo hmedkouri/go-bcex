@@ -156,7 +156,7 @@ func (c *Client) do(method string, resource string, params map[string]string, pa
 	if err != nil {
 		return response, err
 	}
-	if resp.StatusCode != 200 && resp.StatusCode != 401 {
+	if resp.StatusCode != 200 {
 		return nil, &APIError{
 			Status:  resp.StatusCode,
 			Message: string(response),
