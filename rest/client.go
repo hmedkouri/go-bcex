@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -139,7 +140,7 @@ func (c *Client) do(method string, resource string, params map[string]string, pa
 	// Auth
 	if authNeeded {
 		if len(c.apiKey) == 0 || len(c.apiSecret) == 0 {
-			err = errors.New("You need to set API Key and API Secret to call this method")
+			err = errors.New("you need to set API Key and API Secret to call this method")
 			return
 		}
 		//req.SetBasicAuth(c.apiKey, c.apiSecret)
@@ -157,9 +158,20 @@ func (c *Client) do(method string, resource string, params map[string]string, pa
 		return response, err
 	}
 	if resp.StatusCode != 200 && resp.StatusCode != 401 {
-		return response, errors.New(resp.Status)
+		var res interface{}
+		if err := json.Unmarshal(response, res); err != nil {
+			return nil, &APIError{
+				Status:  resp.StatusCode,
+				Message: err.Error(),
+			}
+		}
+		
+		return nil, &APIError{
+			Status:  resp.StatusCode,
+			Message: res.(string),		
+		}
 	}
-	return response, err
+	return response, nil
 }
 
 // handleErr gets JSON response from API and deal with error
