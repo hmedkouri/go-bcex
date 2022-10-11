@@ -1,5 +1,6 @@
 bcex
 ====
+[![GoDoc](https://godoc.org/github.com/hmedkouri/go-bcex?status.svg)](https://godoc.org/github.com/hmedkouri/go-bcex)
 [![Go](https://github.com/hmedkouri/go-bcex/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/hmedkouri/go-bcex/actions/workflows/go.yml)
 [![CodeQL](https://github.com/hmedkouri/go-bcex/actions/workflows/codeql.yml/badge.svg)](https://github.com/hmedkouri/go-bcex/actions/workflows/codeql.yml)
 

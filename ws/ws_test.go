@@ -11,14 +11,14 @@ import (
 )
 
 var (
-	apiKey    = os.Getenv("BCEX_API_KEY")
-	apiSecret = os.Getenv("BCEX_API_SECRET")
-	bc                  *bcex.Bcex = bcex.New(apiKey, apiSecret)
+	apiKey                 = os.Getenv("BCEX_API_KEY")
+	apiSecret              = os.Getenv("BCEX_API_SECRET")
+	bc        *bcex.Client = bcex.New(apiKey, apiSecret)
 )
 
 func TestWs(t *testing.T) {
 	err := bc.Ws.Start(true)
-	
+
 	if err != nil {
 		log.Fatal(err)
 	}

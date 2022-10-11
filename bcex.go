@@ -1,3 +1,6 @@
+// Package bcex is a golang Api Blockchain.com V4 Rest API and V1 Websockets API
+//
+// https://blockchain.info/api
 package bcex
 
 import (
@@ -7,14 +10,15 @@ import (
 	"github.com/hmedkouri/go-bcex/ws"
 )
 
-type Bcex struct {
+// Client is the main go-bcex handle to the rest and ws clients
+type Client struct {
 	Rest        *rest.Client
 	Ws          *ws.WebSocketClient
 	websocketOn bool
 }
 
-// New returns an instantiated HitBTC struct
-func New(apiKey, apiSecret string) *Bcex {
+// New returns an instantiated go-bcex Client struct
+func New(apiKey, apiSecret string) *Client {
 	api := rest.NewClient(apiKey, apiSecret)
 	ws := ws.NewWebSocketClient(ws.Configuration{
 		Host:      ws.WsEndpoint,
@@ -23,5 +27,5 @@ func New(apiKey, apiSecret string) *Bcex {
 		Keepalive: true,
 		Env:       ws.PROD,
 	})
-	return &Bcex{api, ws, true}
+	return &Client{api, ws, true}
 }
