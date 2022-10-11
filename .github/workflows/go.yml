@@ -26,3 +26,9 @@ jobs:
     #      BCEX_API_KEY: ${{ secrets.BCEX_API_KEY }}
     #      BCEX_API_SECRET: ${{ secrets.BCEX_API_SECRET }}
     #  run: go test -v ./...
+
+    - name: Publish doc to go.dev packages
+      run: |
+        git pull // 1
+        export latest="$(git describe --tags `git rev-list --tags --max-count=1`)" // 2
+        curl https://proxy.golang.org/github.com/hmedkouri/go-bcex/@v/$latest.info // 3
