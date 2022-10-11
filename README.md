@@ -7,7 +7,7 @@ bcex
 > WORK IN PROGRESS USE AT YOUR OWN RISK
 
 
-Blockchain Exchange Golang API
+Blockchain.com Exchange Golang API
 
 A complete golang wrapper for the [Blockchain.com](https://exchange.blockchain.com) Exchange Websockets V1 and Rest V3 API.
 
