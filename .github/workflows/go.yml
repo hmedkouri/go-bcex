@@ -22,4 +22,7 @@ jobs:
       run: go build -v ./...
 
     - name: Test
+      env:
+          BCEX_API_KEY: ${{ secrets.BCEX_API_KEY }}
+          BCEX_API_SECRET: ${{ secrets.BCEX_API_SECRET }}
       run: go test -v ./...
