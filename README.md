@@ -4,7 +4,7 @@ bcex
 [![CodeQL](https://github.com/hmedkouri/go-bcex/actions/workflows/codeql.yml/badge.svg)](https://github.com/hmedkouri/go-bcex/actions/workflows/codeql.yml)
 
 *NOTICE:*
-> WORK IN PROGRESS USE AT YOUR RISK
+> WORK IN PROGRESS USE AT YOUR OWN RISK
 
 
 Blockchain Exchange Golang API
