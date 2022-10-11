@@ -1,41 +1,16 @@
-bcex
-====
-[![Go](https://github.com/hmedkouri/go-bcex/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/hmedkouri/go-bcex/actions/workflows/go.yml)
-[![CodeQL](https://github.com/hmedkouri/go-bcex/actions/workflows/codeql.yml/badge.svg)](https://github.com/hmedkouri/go-bcex/actions/workflows/codeql.yml)
-
-*NOTICE:*
-> WORK IN PROGRESS USE AT YOUR RISK
-
-
-Blockchain Exchange Golang API
-
-A complete golang wrapper for the [Blockchain.com](https://exchange.blockchain.com) Exchange Websockets V1 and Rest V3 API.
-
-For more info about Blockchain.com API [read here](https://blockchain.info/api).
-
-Installation
------------------
-
-```bash
-go get github.com/hmedkouri/go-bcex
-```
-
-Usage
------------
-
-```go
 package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/hmedkouri/go-bcex"
 )
 
 func main() {
-    apiKey := "YOUR-API-KEY"
-	secretKey := "YOUR-SECRET-KEY"
-    client := bcex.New(apiKey, secretKey)
+	apiKey := os.Getenv("BCEX_API_KEY")
+	secretKey := os.Getenv("BCEX_API_SECRET")
+	client := bcex.New(apiKey, secretKey)
 
 	symbol, err := client.Rest.GetSymbol("BTC-USD")
 	if err != nil {
@@ -103,12 +78,5 @@ func main() {
 			log.Printf("received symbols %+v", symbolsMsg)
 		}
 	}
+
 }
-```
-
-Supporting APIs
----------------
-
-* [Rest](https://api.blockchain.com/v3/)
-
-* [Ws](https://exchange.blockchain.com/api/#websocket-api)

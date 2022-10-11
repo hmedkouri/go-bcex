@@ -8,20 +8,20 @@ import (
 )
 
 type Bcex struct {
-	Api *rest.Client
-	Ws  *ws.WebSocketClient
-	websocketOn      bool
+	Rest        *rest.Client
+	Ws          *ws.WebSocketClient
+	websocketOn bool
 }
 
 // New returns an instantiated HitBTC struct
 func New(apiKey, apiSecret string) *Bcex {
 	api := rest.NewClient(apiKey, apiSecret)
 	ws := ws.NewWebSocketClient(ws.Configuration{
-		Host: ws.WsEndpoint,
-		ApiKey: apiSecret,
-		Timeout: 60 * time.Second,
+		Host:      ws.WsEndpoint,
+		ApiKey:    apiSecret,
+		Timeout:   60 * time.Second,
 		Keepalive: true,
-		Env:     ws.PROD,
+		Env:       ws.PROD,
 	})
 	return &Bcex{api, ws, true}
 }
